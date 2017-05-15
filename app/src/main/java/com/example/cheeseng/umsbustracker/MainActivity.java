@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         switch(position){
             case 0:
                 currentRouteId = 1;
-                Toast.makeText(parent.getContext(), "Current route_id: " + currentRouteId, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(parent.getContext(), "Current route_id: " + currentRouteId, Toast.LENGTH_SHORT).show();
                 break;
             case 1:
                 currentRouteId = 2;
@@ -336,6 +336,17 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
+    protected void onDestroy() {
+        // Disconnecting the client invalidates it.
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+
+        // only stop if it's connected, otherwise we crash
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onDestroy();
+    }
+
     /*protected void onStop() {
         // Disconnecting the client invalidates it.
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -351,15 +362,4 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         buildGoogleApiClient();
         super.onRestart();
     }*/
-
-    protected void onDestroy() {
-        // Disconnecting the client invalidates it.
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-
-        // only stop if it's connected, otherwise we crash
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
-        super.onDestroy();
-    }
 }
