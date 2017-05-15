@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
     protected void onRestart(){
         buildGoogleApiClient();
         super.onRestart();
-    }
+    }*/
 
     protected void onDestroy(){
         // Disconnecting the client invalidates it.
@@ -362,5 +362,5 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         }
         super.onDestroy();
     }
-    */
+
 }
