@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         super.onRestart();
     }*/
 
-    protected void onDestroy(){
+    protected void onDestroy() {
         // Disconnecting the client invalidates it.
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
@@ -362,5 +362,4 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         }
         super.onDestroy();
     }
-
 }
