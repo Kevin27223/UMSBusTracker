@@ -14,32 +14,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Chee Seng on 22-Nov-16.
+ * Created by Chee Seng on 20-May-17.
  */
 
-public class RouteActivity extends AppCompatActivity {
+public class ScheduleActivity extends AppCompatActivity {
 
+    ExpandableListView expListView;
     List<String> groupList;
     List<String> childList;
     Map<String, List<String>> routeCollection;
-    ExpandableListView expListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_route);
+        setContentView(R.layout.activity_schedule);
 
         createGroupList();
         createCollection();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.route_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.schedule_toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        expListView = (ExpandableListView) findViewById(R.id.route_list);
-        final ListExpandableListAdapter expListAdapter = new ListExpandableListAdapter(
+        expListView = (ExpandableListView) findViewById(R.id.schedule_list);
+        final ImageExpandableListAdapter expListAdapter = new ImageExpandableListAdapter(
                 this, groupList, routeCollection);
         expListView.setAdapter(expListAdapter);
 
@@ -66,17 +66,10 @@ public class RouteActivity extends AppCompatActivity {
     }
 
     private void createCollection() {
-        String[] campusModels = { "DKP Lama - K.Resital", "K.Resital - DKP Baru",
-                "DKP Baru - K.Resital", "K.Resital - FKJ", "FKJ - PPIB", "PPIB - DKP Lama"};
-        String[] usiaModels = { "USIA - FSSA", "FSSA - PPIB", "PPIB - DKP Lama",
-                "DKP Lama - DKP Baru", "DKP Baru - DKP Lama", "DKP Lama - PPIB", "PPIB - FKJ",
-                "FKJ - USIA"};
-        String[] kingfisherModels = { "KF - FSSA", "FSSA - PPIB", "PPIB - DKP Lama",
-                "DKP Lama - DKP Baru", "DKP Baru - DKP Lama", "DKP Lama - PPIB", "PPIB - FKJ",
-                "FKJ - KF" };
-        String[] angkasaModels = { "Angkasa - FSSA", "FSSA - PPIB", "PPIB - DKP Lama",
-                "DKP Lama - DKP Baru", "DKP Baru - DKP Lama", "DKP Lama - PPIB", "PPIB - FKJ",
-                "FKJ - Angkasa" };
+        String[] campusModels = { "campus_morning", "campus_evening" };
+        String[] usiaModels = { "usia_morning", "usia_evening" };
+        String[] kingfisherModels = { "kf_morning", "kf_morning" };
+        String[] angkasaModels = { "angkasa" };
 
         routeCollection = new LinkedHashMap<String, List<String>>();
 
@@ -94,9 +87,9 @@ public class RouteActivity extends AppCompatActivity {
         }
     }
 
-    private void loadChild(String[] laptopModels) {
+    private void loadChild(String[] groupModels) {
         childList = new ArrayList<String>();
-        for (String model : laptopModels)
+        for (String model : groupModels)
             childList.add(model);
     }
 

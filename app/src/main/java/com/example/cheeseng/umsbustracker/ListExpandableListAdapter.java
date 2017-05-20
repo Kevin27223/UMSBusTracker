@@ -16,13 +16,13 @@ import java.util.Map;
  * Created by Chee Seng on 15-May-17.
  */
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class ListExpandableListAdapter extends BaseExpandableListAdapter {
     private Activity context;
     private Map<String, List<String>> groupCollections;
     private List<String> childList;
 
-    public ExpandableListAdapter(Activity context, List<String> childList,
-                                 Map<String, List<String>> groupCollections) {
+    public ListExpandableListAdapter(Activity context, List<String> childList,
+                                     Map<String, List<String>> groupCollections) {
         this.context = context;
         this.groupCollections = groupCollections;
         this.childList = childList;
@@ -46,7 +46,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.route_child, null);
         }
 
-        TextView item = (TextView) convertView.findViewById(R.id.route);
+        TextView item = (TextView) convertView.findViewById(R.id.route_child);
 
         item.setText(laptop);
         return convertView;

@@ -174,7 +174,8 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
 
         }
         else if (id == R.id.nav_schedule){
-
+            Intent intent = new Intent(MainActivity.this, ScheduleActivity.class);
+            startActivity(intent);
         }
         else if (id == R.id.nav_announcement) {
             Intent intent = new Intent(MainActivity.this, AnnouncementActivity.class);

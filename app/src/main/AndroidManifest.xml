@@ -42,6 +42,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name=".ScheduleActivity"
+            android:label="Route Information"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".AnnouncementActivity"
             android:label="Announcement"
             android:theme="@style/AppTheme.NoActionBar" />
