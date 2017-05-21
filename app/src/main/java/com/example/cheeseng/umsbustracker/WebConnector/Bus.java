@@ -41,6 +41,7 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
     private String key;
     private Context context;
     private Marker[] marker;
+    Distance distance;
 
     public interface AsyncResponse {
         void setLatLang(double x, double y);
@@ -115,13 +116,24 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
         if(status.equals("OK")){
             // get estimated time using Google Distance Matrix
             if (dLat != 0 && dLng != 0) {
-                new TravelTime(eta_value, latitude, longitude, dLat, dLng, key).execute();
+                distance = new Distance(this,dLat,dLng);
+                distance.execute();
+                String msg = "Latitude:" + dLat + "; Longitude:" + dLng;
+                Log.i("Bus", msg);
             }
+
+            String msg = "Length: " + length;
+            Log.i("Bus", msg);
 
             // set marker on map
             for(int i=0; i<length; i++) {
                 marker[i].setVisible(true);
                 marker[i].setPosition(new LatLng(latitude, longitude));
+            }
+
+            //hide unused marker
+            for(int i=length; i<marker.length; i++) {
+                marker[i].setVisible(false);
             }
         }
         else{
@@ -131,5 +143,11 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
             eta_value.setText("");
             Toast.makeText(context, status, Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void updateDestinationCoordinate(double latitude, double longitude){
+        dLat = latitude;
+        dLng = longitude;
+        new TravelTime(eta_value, this.latitude, this.longitude, dLat, dLng, key).execute();
     }
 }
