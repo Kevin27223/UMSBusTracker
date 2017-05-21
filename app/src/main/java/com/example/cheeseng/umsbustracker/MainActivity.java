@@ -38,6 +38,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final ImageButton button = (ImageButton) findViewById(R.id.track_bus);
+        final Button button = (Button) findViewById(R.id.track_bus);
         button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 LatLng busLatLng = new LatLng(latitude, longitude);
