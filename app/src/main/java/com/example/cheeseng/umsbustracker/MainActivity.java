@@ -26,6 +26,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -364,4 +365,10 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         buildGoogleApiClient();
         super.onRestart();
     }*/
+
+    public void showMsg(String msg){
+        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.activity_main),
+                msg, Snackbar.LENGTH_LONG);
+        mySnackbar.show();
+    }
 }

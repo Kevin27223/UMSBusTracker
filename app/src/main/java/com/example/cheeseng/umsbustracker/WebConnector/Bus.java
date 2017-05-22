@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cheeseng.umsbustracker.MainActivity;
 import com.example.cheeseng.umsbustracker.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -41,6 +42,7 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
     private String key;
     private Context context;
     private Marker[] marker;
+    private MainActivity activity;
     Distance distance;
 
     public interface AsyncResponse {
@@ -49,8 +51,8 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
 
     public AsyncResponse delegate = null;
 
-    public Bus(Context context, Marker[] marker, int route_id, TextView eta_value, double dLat, double dLng, String key){
-        this.context = context;
+    public Bus(MainActivity activity, Marker[] marker, int route_id, TextView eta_value, double dLat, double dLng, String key){
+        this.activity = activity;
         this.marker = marker;
         this.route_id = route_id;
         this.eta_value = eta_value;
@@ -141,7 +143,8 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
                 marker[i].setVisible(false);
             }
             eta_value.setText("");
-            Toast.makeText(context, status, Toast.LENGTH_LONG).show();
+            activity.showMsg(status);
+            //Toast.makeText(context, status, Toast.LENGTH_LONG).show();
         }
     }
 
