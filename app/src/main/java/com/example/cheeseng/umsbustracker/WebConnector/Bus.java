@@ -4,15 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cheeseng.umsbustracker.MainActivity;
-import com.example.cheeseng.umsbustracker.R;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -24,6 +21,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Chee Seng on 14-Mar-17.
@@ -32,17 +31,17 @@ import java.net.URI;
 
 public class Bus extends AsyncTask<Void, Void, JSONObject>{
     private int route_id;
-    /*private Double []latitude = new Double[2];
-    private Double []longitude = new Double[2];*/
-    private double latitude, longitude;
+    private double []latitude;
+    private double []longitude;
+    //private double latitude, longitude;
     private double dLat = 0;
     private double dLng = 0;
     private JSONObject jObj;
     private TextView eta_value;
     private String key;
-    private Context context;
     private Marker[] marker;
     private MainActivity activity;
+    private Polyline polyLine;
     Distance distance;
 
     public interface AsyncResponse {
@@ -51,8 +50,10 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
 
     public AsyncResponse delegate = null;
 
-    public Bus(MainActivity activity, Marker[] marker, int route_id, TextView eta_value, double dLat, double dLng, String key){
+    public Bus(MainActivity activity, Polyline polyLine, Marker[] marker, int route_id,
+               TextView eta_value, double dLat, double dLng, String key){
         this.activity = activity;
+        this.polyLine = polyLine;
         this.marker = marker;
         this.route_id = route_id;
         this.eta_value = eta_value;
@@ -102,15 +103,22 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
             if (status.equals("OK")) {
                 jArray = result.getJSONArray("location");
                 length = jArray.length();
-                jObj = jArray.getJSONObject(0);
+                latitude = new double[length];
+                longitude = new double[length];
+                for(int i=0; i<length; i++){
+                    jObj = jArray.getJSONObject(i);
+                    latitude[i] = jObj.getDouble("latitude");
+                    longitude[i] = jObj.getDouble("longitude");
+                }
+                /*jObj = jArray.getJSONObject(0);
                 latitude = jObj.getDouble("latitude");
-                longitude = jObj.getDouble("longitude");
+                longitude = jObj.getDouble("longitude");*/
             }
         }
         catch(Exception e){
             Log.e("Bus.onPostExecute", "Error parsing data " + e.toString());
         }
-        delegate.setLatLang(latitude,longitude);
+        //delegate.setLatLang(latitude,longitude);
 
         /*String msg = "Latitude:" + latitude + "; Longitude:" + longitude;
         Log.i("Bus", msg);*/
@@ -118,10 +126,10 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
         if(status.equals("OK")){
             // get estimated time using Google Distance Matrix
             if (dLat != 0 && dLng != 0) {
-                distance = new Distance(this,dLat,dLng);
+                distance = new Distance(this,route_id,latitude,longitude,dLat,dLng);
                 distance.execute();
-                String msg = "Latitude:" + dLat + "; Longitude:" + dLng;
-                Log.i("Bus", msg);
+                /*String msg = "Latitude:" + dLat + "; Longitude:" + dLng;
+                Log.i("Bus", msg);*/
             }
 
             String msg = "Length: " + length;
@@ -130,7 +138,7 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
             // set marker on map
             for(int i=0; i<length; i++) {
                 marker[i].setVisible(true);
-                marker[i].setPosition(new LatLng(latitude, longitude));
+                marker[i].setPosition(new LatLng(latitude[i], longitude[i]));
             }
 
             //hide unused marker
@@ -139,18 +147,25 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
             }
         }
         else{
+            delegate.setLatLang(dLat,dLng);
             for(int i=0; i<marker.length; i++) {
                 marker[i].setVisible(false);
             }
+            List<LatLng> list = new ArrayList<LatLng>();
+            list.add(new LatLng(0,0));
+            list.add(new LatLng(0,0));
+            polyLine.setPoints(list);
             eta_value.setText("");
             activity.showMsg(status);
             //Toast.makeText(context, status, Toast.LENGTH_LONG).show();
         }
     }
 
-    public void updateDestinationCoordinate(double latitude, double longitude){
+    public void updateDestinationCoordinate(double bus_latitude, double bus_longitude,
+                                            double latitude, double longitude){
         dLat = latitude;
         dLng = longitude;
-        new TravelTime(eta_value, this.latitude, this.longitude, dLat, dLng, key).execute();
+        delegate.setLatLang(bus_latitude,bus_longitude);
+        new TravelTime(eta_value, polyLine, bus_latitude, bus_longitude, dLat, dLng, key).execute();
     }
 }

@@ -2,7 +2,6 @@ package com.example.cheeseng.umsbustracker.WebConnector;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,12 +20,19 @@ import java.net.URI;
 
 public class Distance extends AsyncTask<Void, Void, JSONObject> {
 
-    private double latitude, longitude, retLat, retLong;
+    private double latitude, longitude, retLat, retLong, busLat, busLong;
+    private double[] bus_latitude;
+    private double[] bus_longitude;
+    private int route_id;
     private Bus bus;
     private JSONObject jObj;
 
-    public Distance(Bus bus, double latitude, double longitude){
+    public Distance(Bus bus, int route_id, double[] bus_latitude, double[] bus_longitude,
+                    double latitude, double longitude){
         this.bus = bus;
+        this.route_id = route_id;
+        this.bus_latitude = bus_latitude;
+        this.bus_longitude = bus_longitude;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -35,8 +41,27 @@ public class Distance extends AsyncTask<Void, Void, JSONObject> {
     protected JSONObject doInBackground(Void... voids) {
         String json;
         try{
-            String link = "http://umsbustrack.esy.es/Mobile/distance.php?latitude=" + latitude +
-                    "&longitude=" + longitude;
+            String link = "http://umsbustrack.esy.es/Mobile/distance.php?route_id=" + route_id +
+                    "&latitude=" + latitude + "&longitude=" + longitude;
+
+
+            for(int i=0; i<bus_latitude.length; i++){
+                if(i==0){
+                    link += "&bus_latitude=" + bus_latitude[i];
+                }
+                else {
+                    link += "," + bus_latitude[i];
+                }
+            }
+
+            for(int i=0; i<bus_longitude.length; i++){
+                if(i==0){
+                    link += "&bus_longitude=" + bus_longitude[i];
+                }
+                else {
+                    link += "," + bus_longitude[i];
+                }
+            }
 
             HttpClient client = new DefaultHttpClient();
             HttpGet request = new HttpGet();
@@ -70,11 +95,13 @@ public class Distance extends AsyncTask<Void, Void, JSONObject> {
                 jObj = jArray.getJSONObject(i);
                 retLat = jObj.getDouble("latitude");
                 retLong = jObj.getDouble("longitude");
+                busLat = jObj.getDouble("bus_latitude");
+                busLong = jObj.getDouble("bus_longitude");
             }
         }
         catch(Exception e){
             Log.e("Distance.PostExecute", "Error parsing data " + e.toString());
         }
-        bus.updateDestinationCoordinate(retLat,retLong);
+        bus.updateDestinationCoordinate(busLat,busLong,retLat,retLong);
     }
 }

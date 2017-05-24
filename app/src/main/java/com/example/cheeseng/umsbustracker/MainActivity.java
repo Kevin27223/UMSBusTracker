@@ -18,10 +18,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,10 +43,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMyLocationButtonClickListener,
         OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks,
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
     private Bus bus;
     private double latitude, longitude;
     private TextView eta;
+    private Polyline polyLine;
     int currentRouteId = 1;
     
     public MainActivity(){}
@@ -153,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
                 currentRouteId = 4;
                 break;
         }
+        startLocationUpdates();
         //Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
     }
 
@@ -194,6 +200,15 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setPadding(0,0,0,300);
         mMap.setOnMyLocationButtonClickListener(this);
+
+        List<LatLng> list = new ArrayList<LatLng>();
+        list.add(new LatLng(0,0));
+        list.add(new LatLng(0,0));
+        polyLine = mMap.addPolyline(new PolylineOptions()
+                .addAll(list)
+                .width(12)
+                .color(Color.parseColor("#05b1fb"))
+                .geodesic(true));
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -244,7 +259,8 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
                 == PackageManager.PERMISSION_GRANTED) {
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-            LatLng userLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            LatLng userLatLng = new LatLng(mCurrentLocation.getLatitude(),
+                    mCurrentLocation.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 18.0f));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
 
@@ -293,7 +309,8 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
 
     @Override
     public void onLocationChanged(Location location) {
-        bus = new Bus(this, mCurrLocationMarker, currentRouteId, eta, location.getLatitude(), location.getLongitude(), key);
+        bus = new Bus(this, polyLine, mCurrLocationMarker, currentRouteId, eta,
+                location.getLatitude(), location.getLongitude(), key);
         bus.delegate = this;
         bus.execute();
 
