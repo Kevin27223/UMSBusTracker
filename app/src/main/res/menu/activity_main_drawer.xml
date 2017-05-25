@@ -7,10 +7,10 @@
             android:icon="@drawable/ic_route"
             android:title="Route Information" />
 
-        <item
+        <!--<item
             android:id="@+id/nav_favourite"
             android:icon="@drawable/ic_bookmark"
-            android:title="Favourite" />
+            android:title="Favourite" />-->
 
         <item
             android:id="@+id/nav_schedule"

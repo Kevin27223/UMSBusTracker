@@ -166,6 +166,8 @@ public class Bus extends AsyncTask<Void, Void, JSONObject>{
         dLat = latitude;
         dLng = longitude;
         delegate.setLatLang(bus_latitude,bus_longitude);
-        new TravelTime(eta_value, polyLine, bus_latitude, bus_longitude, dLat, dLng, key).execute();
+        if(bus_latitude != dLat && bus_longitude != dLng) {
+            new TravelTime(eta_value, polyLine, bus_latitude, bus_longitude, dLat, dLng, key).execute();
+        }
     }
 }

@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
     Location mCurrentLocation;
     GoogleApiClient mGoogleApiClient;
     Marker[] mCurrLocationMarker = new Marker[10];
+    Marker[] busStopMarker = new Marker[12];
     private Bus bus;
     private double latitude, longitude;
     private TextView eta;
@@ -141,11 +142,13 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         //String item = parent.getItemAtPosition(position).toString();
+        String class_id = "";
 
         // TODO: changing route and buses based on selection
         switch(position){
             case 0:
                 currentRouteId = 1;
+                //Populate bus stop location
                 //Toast.makeText(parent.getContext(), "Current route_id: " + currentRouteId, Toast.LENGTH_SHORT).show();
                 break;
             case 1:
@@ -158,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
                 currentRouteId = 4;
                 break;
         }
+        new BusStop(currentRouteId,busStopMarker).execute();
         startLocationUpdates();
         //Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
     }
@@ -178,9 +182,9 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
             Intent intent = new Intent(MainActivity.this, RouteActivity.class);
             startActivity(intent);
         }
-        else if(id == R.id.nav_favourite){
+        /*else if(id == R.id.nav_favourite){
 
-        }
+        }*/
         else if (id == R.id.nav_schedule){
             Intent intent = new Intent(MainActivity.this, ScheduleActivity.class);
             startActivity(intent);
@@ -223,10 +227,6 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
             mMap.setMyLocationEnabled(true);
         }
         enableMyLocation();
-
-        //Populate bus stop location
-        BusStop busStop = new BusStop(mMap);
-        busStop.execute();
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -272,6 +272,11 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
             for(int i=0; i<mCurrLocationMarker.length; i++) {
                 mCurrLocationMarker[i] = mMap.addMarker(markerOptions);
             }
+
+            for(int i=0; i<busStopMarker.length; i++) {
+                busStopMarker[i] = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(0,0)));
+            }
         }
 
         if (mCurrentLocation != null) {
@@ -281,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements OnMyLocationButto
         startLocationUpdates();
     }
 
-    protected void startLocationUpdates() {
+    public void startLocationUpdates() {
         long UPDATE_INTERVAL = 60 * 1000;  /* 60 secs */
         long FASTEST_INTERVAL = 30 * 1000; /* 30 sec */
 

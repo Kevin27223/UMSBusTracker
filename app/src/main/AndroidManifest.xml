@@ -43,7 +43,7 @@
 
         <activity
             android:name=".ScheduleActivity"
-            android:label="Route Information"
+            android:label="Bus Schedule Information"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
